@@ -1,4 +1,4 @@
-#include "board.h"
+#include "game.h"
 
 using namespace std;
 
@@ -37,38 +37,64 @@ void SubBoard::printSquares()
 }
 
 /*
- * Checks whether the given sub-board is solved or not.
+ * Checks whether the given sub-board is solved or not. Checks the 3 rows and columns, and the 2 diagonals
+ * The check is only made if five or more squares are filled - only at this stage is a win possible.
  */
 bool SubBoard::isSolved()
 {
-    if (filledSquares < 4)
-    // This is too horrible. Find a better way to do it. Also put in checks for times where it is not possible for a board
-    // to be solved, or if a solution is impossible (i.e. the board is a draw).
-    // Also need to set who is the winner in here.
-    for (int i = 0; i < 3; ++i)
-	if ((squares[i].getState() == circle && squares[i+3].getState() == circle && squares[i+6].getState() == circle) ||
-	    (squares[i].getState() == cross && squares[i+3].getState() == cross && squares[i+6].getState() == cross))
-	    return true;
-    for (int i = 0; i < 9; i += 3)
-	if ((squares[i].getState() == circle && squares[i+1].getState() == circle && squares[i+2].getState() == circle) ||
-	    (squares[i].getState() == cross && squares[i+1].getState() == cross && squares[i+2].getState() == cross))
-	    return true;
-
-    if ((squares[0].getState() == circle && squares[4].getState() == circle && squares[8].getState() == circle) ||
-	(squares[0].getState() == cross && squares[4].getState() == cross && squares[8].getState() == cross))
-	return true;
-    if ((squares[2].getState() == circle && squares[4].getState() == circle && squares[6].getState() == circle) ||
-	(squares[2].getState() == cross && squares[4].getState() == cross && squares[6].getState() == cross))
-	return true;
-
-    bool all = true;
-    for (int i = 0; i < 9; ++i)
-	all = all && squares[i].getState() != empty;
-
-    if (all){
-	cout << "Board full" << endl;
+    if (filledSquares < 5){ // Only check if a player can have played 3 times
+	return false;
+    } else if (filledSquares == 9){
+	// If all the squares are filled, then this subBoard is a draw.
+	// Count this as a "solved" board.
+	winner = empty;
 	return true;
     }
 
-    return false;
+    // bool all = true;
+    // for (int i = 0; i < 9; ++i)
+    // 	all = all && squares[i].getState() != empty;
+
+    // if (all){
+    // 	cout << "Board full" << endl;
+    // 	winner = empty;
+    // 	return true;
+    // }
+
+    return solveHelper(cross) || solveHelper(circle);
+}
+
+/*
+ * Helper function for the isSolved() function. Does the checks for a specific squarestate/player.
+ * Also sets the winner if there is one.
+ */
+bool SubBoard::solveHelper(SquareState s)
+{
+    // This is still quite horrible. Also put in checks for times where it is not possible for a board
+    // to be solved, or if a solution is impossible (i.e. the board is a draw).
+    // Also need to set who is the winner in here.
+    bool solved = false;
+    
+    if (squares[0].getState() == s && squares[4].getState() == s && squares[8].getState() == s)
+	solved = true;
+    if (squares[2].getState() == s && squares[4].getState() == s && squares[6].getState() == s)
+	solved = true;
+    for (int i = 0; i < 3; ++i){
+	if (squares[i].getState() == s && squares[i+3].getState() == s && squares[i+6].getState() == s){
+	    solved = true;
+	    break;
+	}
+    }
+    
+    for (int i = 0; i < 9; i += 3){
+	if (squares[i].getState() == s && squares[i+1].getState() == s && squares[i+2].getState() == s){
+	    solved = true;
+	    break;
+	}
+    }
+    
+    if (solved)
+	winner = s;
+
+    return solved;
 }

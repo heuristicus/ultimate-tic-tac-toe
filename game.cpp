@@ -1,4 +1,4 @@
-#include "board.h"
+#include "game.h"
 
 using namespace std;
 
@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
     cout << "Final result:" << endl;
 
     b.printSquares();
+    cout << "Winner is " << b.getWinner() << endl;
 
     return 0;
 }

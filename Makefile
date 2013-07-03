@@ -3,14 +3,17 @@ CXX=g++
 
 all: game
 
-game: board.h game.o square.o subBoard.o
+game: game.h game.o square.o subBoard.o
 	$(CXX) $(CXXFLAGS) -o $@ game.o square.o subBoard.o
 
-game.o: board.h
+game.o: game.h
 	$(CXX) $(CXXFLAGS) -c game.cpp
 
-square.o: board.h
+square.o: game.h
 	$(CXX) $(CXXFLAGS) -c square.cpp
 
-subBoard.o: board.h
-	$(CXX) $(CXXFLAGS) -c subBoard.cpp	
+subBoard.o: game.h
+	$(CXX) $(CXXFLAGS) -c subBoard.cpp
+
+clean:
+	rm *.o game

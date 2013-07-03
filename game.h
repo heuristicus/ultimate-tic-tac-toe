@@ -28,7 +28,9 @@ public:
     char getSquare(int index);
     bool isSolved();
     void printSquares();
+    SquareState getWinner(){ return winner; }
 private:
+    bool solveHelper(SquareState s);
     int filledSquares; // Number of non-empty squares
     Square squares[9]; // The state of each square on the board
     bool solved; // Is the board solved or not
